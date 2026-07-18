@@ -21,3 +21,12 @@ export interface BookBody {
 
 }
 
+
+export interface BookQuery {
+    title?: string,
+    author?: string,
+    genre?: string,
+    available?: "Yes" | "No",
+    sortedBy?: string,
+    order?: "asc" | "desc"
+}
