@@ -1,28 +1,7 @@
 import { type Request, type Response } from "express"
-import { type Book, type BookBody } from "../types.js"
+import { type Book, type BookBody, type BookQuery } from "../types.js"
 import * as z from 'zod'
-import { addBookService, borrowBookService, deleteBookService, getAllBookService, getBooksByQueryService, updateBookService } from "../services/book.service.js"
-import { fileURLToPath } from "url";
-import path from "path";
-import { readFile } from "fs/promises";
-
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const filePath = path.join(__dirname, "../books.json")
-
-const books: Book[] = JSON.parse(await readFile(filePath, "utf8"));
-
-export interface BookQuery {
-    title?: string,
-    author?: string,
-    genre?: string,
-    available?: "Yes" | "No",
-    sortedBy?: string,
-    order?: "asc" | "desc"
-}
-
+import { addBookService, borrowBookService, deleteBookService, getBookByIdService, getBooksByQueryService, updateBookService } from "../services/book.service.js"
 
 export const getBooks = (req: Request<{}, {}, {}, BookQuery>, res: Response) => {
 
@@ -31,9 +10,7 @@ export const getBooks = (req: Request<{}, {}, {}, BookQuery>, res: Response) => 
 
     if (filteredBooks.length > 0) return res.status(200).send(filteredBooks)
 
-
-
-    return res.status(200).send(books);
+    return res.status(404).json({ error: "No Books Available" })
 }
 
 
@@ -46,7 +23,7 @@ export const getBooksById = (req: Request<BookParam>, res: Response) => {
     if (!Number.isInteger(id) || id < 1) return res.status(400).send("<p>Please check the id. Insert correct id.</p>");
 
     try {
-        const book = getAllBookService(id);
+        const book = getBookByIdService(id);
         return res.status(200).send(book)
     } catch (e) {
         return res.status(400).send(e)
