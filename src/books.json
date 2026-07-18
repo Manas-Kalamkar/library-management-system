@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "title": "The Great Gatsby",
+        "author": "F. Scott Fitzgerald",
+        "genre": "Classic",
+        "publishedYear": "1925",
+        "available": "Yes",
+        "borrowerName": null,
+        "borrowedDate": null
+    },
+    {
+        "id": 2,
+        "title": "To Kill a Mockingbird",
+        "author": "Harper Lee",
+        "genre": "Fiction",
+        "publishedYear": "1960",
+        "available": "No",
+        "borrowerName": "John Smith",
+        "borrowedDate": "2026-07-10"
+    },
+    {
+        "id": 3,
+        "title": "1984",
+        "author": "George Orwell",
+        "genre": "Dystopian",
+        "publishedYear": "1949",
+        "available": "Yes",
+        "borrowerName": null,
+        "borrowedDate": null
+    },
+    {
+        "id": 4,
+        "title": "The Hobbit",
+        "author": "J.R.R. Tolkien",
+        "genre": "Fantasy",
+        "publishedYear": "1937",
+        "available": "No",
+        "borrowerName": "Emily Davis",
+        "borrowedDate": "2026-07-12"
+    },
+    {
+        "id": 5,
+        "title": "Pride and Prejudice",
+        "author": "Jane Austen",
+        "genre": "Romance",
+        "publishedYear": "1813",
+        "available": "Yes",
+        "borrowerName": null,
+        "borrowedDate": null
+    },
+    {
+        "id": 6,
+        "title": "The Catcher in the Rye",
+        "author": "J.D. Salinger",
+        "genre": "Literary Fiction",
+        "publishedYear": "1951",
+        "available": "No",
+        "borrowerName": "Michael Brown",
+        "borrowedDate": "2026-07-14"
+    },
+    {
+        "id": 7,
+        "title": "The Alchemist",
+        "author": "Paulo Coelho",
+        "genre": "Adventure",
+        "publishedYear": "1988",
+        "available": "Yes",
+        "borrowerName": null,
+        "borrowedDate": null
+    },
+    {
+        "id": 8,
+        "title": "Harry Potter and the Sorcerer's Stone",
+        "author": "J.K. Rowling",
+        "genre": "Fantasy",
+        "publishedYear": "1997",
+        "available": "No",
+        "borrowerName": "Sophia Wilson",
+        "borrowedDate": "2026-07-15"
+    },
+    {
+        "id": 9,
+        "title": "The Da Vinci Code",
+        "author": "Dan Brown",
+        "genre": "Mystery",
+        "publishedYear": "2003",
+        "available": "Yes",
+        "borrowerName": null,
+        "borrowedDate": null
+    },
+    {
+        "id": 10,
+        "title": "Atomic Habits",
+        "author": "James Clear",
+        "genre": "Self Help",
+        "publishedYear": "2018",
+        "available": "No",
+        "borrowerName": "David Johnson",
+        "borrowedDate": "2026-07-16"
+    }
+]
