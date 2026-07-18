@@ -34,7 +34,6 @@ export const addBookService = (data: BookBody) => {
 export const updateBookService = (id: number, data: any) => {
 
     const bookIndex = books.findIndex(book => book.id === id);
-    console.log(bookIndex)
 
     if (bookIndex < 0) {
         throw new Error("Book Not Found")
@@ -53,7 +52,6 @@ export const deleteBookService = (id: number) => {
     const bookIndex = books.findIndex(book => book.id === id);
 
     if (bookIndex === -1) throw new Error("Book Not Found");
-    console.log(bookIndex)
     books.splice(bookIndex, 1);
 
     return books
