@@ -1,5 +1,5 @@
 import path from "path";
-import type { BookQuery } from "../controllers/book.controller.js";
+import { type BookQuery } from "../types.js";
 import { type Book, type BookBody } from "../types.js"
 import { readFile, writeFile } from "fs/promises";
 import { fileURLToPath } from "url";
@@ -11,7 +11,7 @@ const filePath = path.join(__dirname, "../books.json");
 const books: Book[] = JSON.parse(await readFile(filePath, "utf8"));
 
 
-export const getAllBookService = (id: number): Book => {
+export const getBookByIdService = (id: number): Book => {
 
     const book = books.find(book => book.id === id);
 
@@ -92,8 +92,13 @@ export const borrowBookService = async (id: number, data: { borrowerName: string
     book.borrowerName = data.borrowerName;
     book.borrowedDate = data.borrowedDate;
 
-    console.log(book)
+    try {
+        await writeFile(filePath, JSON.stringify(books, null, 2), 'utf-8')
+        return `Book ${book.title} is borrowed by ${book.borrowerName} on ${book.borrowedDate}.`
+    } catch (e) {
+        console.error("Failed to write to file:", e);
+        throw new Error("Internal server error: Could not save data.");
+    }
 
-    return `Book ${book.title} is borrowed by ${book.borrowerName} on ${book.borrowedDate}.`
 }
 
