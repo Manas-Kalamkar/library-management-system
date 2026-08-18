@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Author {
+  id        String @id @default(cuid())
+  name      String
+  birthYear Int
+  books     Book[] @relation("Authors")
+}
+
+model Book {
+  id            String  @id @default(cuid())
+  title         String
+  genre         String
+  publishedYear Int
+  available     Boolean
+
+  author   Author? @relation("Authors", fields: [authorId], references: [id],onDelete: Cascade)
+  authorId String
+
+  borrowing Borrowing[] @relation("Borrowing")
+}
+
+model Librarian {
+  id          String @id @default(cuid())
+  name        String
+  email       String @unique
+  salary      Int
+  joiningYear Int
+
+  borrowing Borrowing[] @relation("Borrowing")
+}
+
+model Borrower {
+  id          String @id @default(cuid())
+  name        String
+  email       String @unique
+  joiningYear Int
+  phoneNo     String
+
+  borrowing Borrowing[] @relation("Borrowing")
+}
+
+model Borrowing {
+  id          String    @id @default(cuid())
+  bookId      String
+  borrowerId  String
+  librarianId String
+  book        Book      @relation("Borrowing", fields: [bookId], references: [id])
+  borrower    Borrower  @relation("Borrowing", fields: [borrowerId], references: [id])
+  librarian   Librarian @relation("Borrowing", fields: [librarianId], references: [id])
+
+  borrowedAt DateTime  @default(now())
+  dueDate    DateTime
+  returnedAt DateTime?
+
+  @@unique([bookId, borrowerId])
+}
