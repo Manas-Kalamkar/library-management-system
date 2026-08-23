@@ -17,6 +17,8 @@ model Author {
   name      String
   birthYear Int
   books     Book[] @relation("Authors")
+
+  @@unique([name,birthYear])
 }
 
 model Book {
@@ -30,6 +32,8 @@ model Book {
   authorId String
 
   borrowing Borrowing[] @relation("Borrowing")
+
+  @@unique([title,authorId])
 }
 
 model Librarian {
@@ -40,13 +44,15 @@ model Librarian {
   joiningYear Int
 
   borrowing Borrowing[] @relation("Borrowing")
+
+  @@unique([name,email])
 }
 
 model Borrower {
   id          String @id @default(cuid())
   name        String
   email       String @unique
-  joiningYear Int
+  joiningDate DateTime
   phoneNo     String
 
   borrowing Borrowing[] @relation("Borrowing")
