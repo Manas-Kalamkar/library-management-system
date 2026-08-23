@@ -1,48 +1,38 @@
 import { type Request, type Response } from "express"
-import { type Book, type BookBody, type BookQuery } from "../types.js"
-import * as z from 'zod'
-import { addBookService, borrowBookService, deleteBookService, getBookByIdService, getBooksByQueryService, updateBookService } from "../services/book.service.js"
+import { addBookService, deleteBookService, getBookByIdService, getBooksService, updateBookService } from "../services/book.service.js"
+import { BookQuerySchema, CreateBook } from "../schemas/book.schema.js"
 
-export const getBooks = (req: Request<{}, {}, {}, BookQuery>, res: Response) => {
+export const getBooksController = async (req: Request, res: Response) => {
 
+    const query = BookQuerySchema.safeParse(req.query)
 
-    const filteredBooks = getBooksByQueryService(req.query);
+    if (!query.success) return res.status(401).json({ error: query.error.message })
+
+    const filteredBooks = await getBooksService(query.data);
 
     if (filteredBooks.length > 0) return res.status(200).send(filteredBooks)
 
     return res.status(404).json({ error: "No Books Available" })
 }
 
+export const getBooksByIdController = async (req: Request, res: Response) => {
+    const id = String(req.params.id)
 
-interface BookParam {
-    id: string
-}
-export const getBooksById = (req: Request<BookParam>, res: Response) => {
-    const id = Number(req.params.id)
-
-    if (!Number.isInteger(id) || id < 1) return res.status(400).send("<p>Please check the id. Insert correct id.</p>");
+    // if (!Number.isInteger(id) || id < 1) return res.status(400).send("<p>Please check the id. Insert correct id.</p>");
 
     try {
-        const book = getBookByIdService(id);
+        const book = await getBookByIdService(id);
         return res.status(200).send(book)
     } catch (e) {
         return res.status(400).send(e)
     }
 }
 
-const BookBodySchema = z.object({
-    title: z.string(),
-    author: z.string(),
-    genre: z.string(),
-    publishedYear: z.string(),
-    available: z.enum(["Yes", "No"]),
-    borrowerName: z.string(),
-    borrowedDate: z.coerce.string().nullable()
-})
 
 
-export const addBook = (req: Request<{}, {}, BookBody>, res: Response) => {
-    const result = BookBodySchema.safeParse(req.body);
+export const addBookController = (req: Request, res: Response) => {
+
+    const result = CreateBook.safeParse(req.body);
     if (!result.success) return res.status(400).send("<p>Invalid Book data</p>")
 
     try {
@@ -54,56 +44,27 @@ export const addBook = (req: Request<{}, {}, BookBody>, res: Response) => {
 
 }
 
+export const deleteBookController = async (req: Request, res: Response) => {
+    const id = String(req.params.id)
 
-export const updateBook = (req: Request<BookParam>, res: Response) => {
-    const id = Number(req.params.id);
-    if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: "Invalid id" })
-
-    const result = BookBodySchema.partial().safeParse(req.body);
-    if (!result.success) return res.status(400).json({ error: result.error?.message })
 
     try {
-        updateBookService(id, result.data)
-        res.status(200).send("Updated Successfully.")
+        const book = await deleteBookService(id);
+        return res.status(200).send(book)
     } catch (e) {
-        return res.status(404).send(e);
+        return res.status(400).send(e)
     }
 }
 
 
-export const deleteBook = (req: Request<BookParam>, res: Response) => {
-    const id = Number(req.params.id);
-
-    if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: "Bad Request" });
-
-    try {
-        deleteBookService(id);
-        return res.status(200).send("Deleted Successfully");
-    } catch (e) {
-        return res.status(404).send(e)
-    }
-}
-
-const BookBorrowSchema = z.object({
-    borrowerName: z.string().toLowerCase(),
-    borrowedDate: z.string()
-})
-
-
-export const borrowBook = async (req: Request<BookParam>, res: Response) => {
-    const id = Number(req.params.id);
-    const result = BookBorrowSchema.safeParse(req.body);
-
-    if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: "Book id is invalid" });
-
-    if (!result.success) return res.status(400).json({ error: "Invalid Data" });
+export const updateBookController = async (req: Request, res: Response) => {
+    const id = String(req.params.id)
+    const data = req.body;
 
     try {
-        const message = await borrowBookService(id, result.data);
-        return res.status(200).send(message);
+        const book = await updateBookService(id, data);
+        return res.status(200).send(book)
     } catch (e) {
-        return res.status(400).json({
-            error: e instanceof Error ? e.message : "Something went wrong"
-        })
+        return res.status(400).send(e)
     }
 }

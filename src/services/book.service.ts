@@ -1,102 +1,36 @@
-import path from "path";
-import { type BookQuery } from "../types.js";
-import { type Book, type BookBody } from "../types.js"
-import { readFile, writeFile } from "fs/promises";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const filePath = path.join(__dirname, "../books.json");
-
-const books: Book[] = JSON.parse(await readFile(filePath, "utf8"));
+import prisma from "../config/prisma.js";
+import type { BookQuerySchemaType, CreateBookType, UpdateBookType } from "../schemas/book.schema.js";
+import { addBook, deleteBook, getBooks, getBooksById, updateBook } from "../repositories/book.repository.js";
+import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 
 
-export const getBookByIdService = (id: number): Book => {
+export const getBooksService = async (query: BookQuerySchemaType) => {
+    const books = await getBooks(query);
 
-    const book = books.find(book => book.id === id);
+    return books;
+};
 
-    if (!book) {
-        throw new Error("Book Not Found")
-    }
+export const getBookByIdService = async (id: string) => {
+
+    const book = await getBooksById(id)
 
     return book;
 }
 
 
-export const addBookService = (data: BookBody) => {
-
-    if (!data) {
-        throw new Error("Add appropriate data")
-    }
-    return books.push({ id: books.length + 1, ...data })
-}
-
-export const updateBookService = (id: number, data: any) => {
-
-    const bookIndex = books.findIndex(book => book.id === id);
-
-    if (bookIndex < 0) {
-        throw new Error("Book Not Found")
-    }
-    if (!data) {
-        throw new Error("Add appropriate data")
-    }
-    const book = books[bookIndex]
-    if (!book) {
-        throw new Error("Book Not Found")
-    }
-    Object.assign(book, data)
-}
-
-export const deleteBookService = (id: number) => {
-    const bookIndex = books.findIndex(book => book.id === id);
-
-    if (bookIndex === -1) throw new Error("Book Not Found");
-    books.splice(bookIndex, 1);
-
-    return books
+export const addBookService = async (data: CreateBookType) => {
+    const book = await addBook(data);
+    return book
 }
 
 
-export const getBooksByQueryService = (query: BookQuery): Book[] => {
+export const deleteBookService = async (id: string) => {
+    const deletedBook = await deleteBook(id);
 
-    let filteredSortedBooks = books.filter(book => {
-        const titleMatch = !query.title || book.title.toLocaleLowerCase().includes(query.title.toLocaleLowerCase());
-        const authorMatch = !query.author || book.author.toLocaleLowerCase().includes(query.author.toLocaleLowerCase());
-        const genreMatch = !query.genre || book.genre.toLocaleLowerCase().includes(query.genre.toLocaleLowerCase());
-        const availablityMatch = !query.available || book.available.toLocaleLowerCase().includes(query.available.toLocaleLowerCase());
-
-        return titleMatch && authorMatch && genreMatch && availablityMatch
-    })
-    const sortedBy = query.sortedBy;
-    const order = query.order;
-
-    if (sortedBy === 'publishedYear' && order === 'desc') filteredSortedBooks = filteredSortedBooks.sort((book1, book2) => Number(book2.publishedYear) - Number(book1.publishedYear));
-    if (sortedBy === 'publishedYear' && order === 'asc') filteredSortedBooks = filteredSortedBooks.sort((book1, book2) => Number(book1.publishedYear) - Number(book2.publishedYear));
-
-
-    return filteredSortedBooks
+    return deletedBook;
 }
 
-
-export const borrowBookService = async (id: number, data: { borrowerName: string, borrowedDate: string }) => {
-
-    const book = books.find(book => book.id === id);
-    if (!book) throw new Error("Book not found");
-
-    if (book.available === "No") throw new Error("Book is already borrowed.")
-
-    book.available = "No";
-    book.borrowerName = data.borrowerName;
-    book.borrowedDate = data.borrowedDate;
-
-    try {
-        await writeFile(filePath, JSON.stringify(books, null, 2), 'utf-8')
-        return `Book ${book.title} is borrowed by ${book.borrowerName} on ${book.borrowedDate}.`
-    } catch (e) {
-        console.error("Failed to write to file:", e);
-        throw new Error("Internal server error: Could not save data.");
-    }
-
+export const updateBookService = async (id: string, data: RemoveUndefinedType<UpdateBookType>) => {
+    const updatedBook = await updateBook(id, data);
+    return updatedBook;
 }
-
