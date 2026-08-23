@@ -1,17 +1,16 @@
 import { Router } from "express"
-import { addBook, borrowBook, deleteBook, getBooks, getBooksById, updateBook } from "../controllers/book.controller.js";
+import { addBookController, deleteBookController, getBooksByIdController, getBooksController, updateBookController } from "../controllers/book.controller.js";
+import { removeUndefinedMiddleware } from "../middlewares/removeUndefined.js";
+import { UpdateBook } from "../schemas/book.schema.js";
 
-const router = Router();
+const booksRouter = Router();
+
+booksRouter.get("/", getBooksController)
+booksRouter.post("/", addBookController)
 
 
-router.get("/books", getBooks)
-router.post("/books", addBook)
+booksRouter.get("/:id", getBooksByIdController)
+booksRouter.patch("/:id", removeUndefinedMiddleware(UpdateBook), updateBookController)
+booksRouter.delete("/:id", deleteBookController)
 
-router.get("/books/:id", getBooksById)
-router.patch("/books/:id", updateBook)
-router.delete("/books/:id", deleteBook)
-
-//borrow
-router.post("/books/:id/borrow",borrowBook)
-
-export default router;
+export default booksRouter;
