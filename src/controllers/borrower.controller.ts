@@ -6,7 +6,7 @@ import { BorrowerQuerySchema, CreateBorrower } from "../schemas/borrower.schema.
 
 export const getBorrowersController = async (req: Request, res: Response) => {
 
-    const query = BorrowerQuerySchema.safeParse(req.body);
+    const query = BorrowerQuerySchema.safeParse(req.query);
     if (!query.success) return res.status(401).json({ error: query.error.message })
 
 
