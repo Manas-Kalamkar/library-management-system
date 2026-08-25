@@ -27,11 +27,11 @@ export const getBorrowers = ({ search, joiningDate, page, limit, sort, order }: 
 
     return prisma.borrower.findMany({
         where,
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: {
-            [sort]: order
-        }
+        // skip: (page - 1) * limit,
+        // take: limit,
+        // orderBy: {
+        //     [sort]: order
+        // }
     })
 }
 export const getBorrowerById = (id: string) => {
