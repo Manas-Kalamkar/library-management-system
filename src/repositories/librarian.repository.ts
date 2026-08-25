@@ -12,11 +12,11 @@ export const getLibrarians = ({ search, joiningYear, sort, order, page, limit }:
     }
     return prisma.librarian.findMany({
         where,
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: {
-            [sort]: order
-        }
+        // skip: (page - 1) * limit,
+        // take: limit,
+        // orderBy: {
+        //     [sort]: order
+        // }
     })
 }
 export const getLibrarianById = (id: string) => {
