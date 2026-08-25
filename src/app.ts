@@ -4,6 +4,7 @@ import booksRouter from "./routes/book.route.js";
 import authorsRouter from "./routes/author.route.js";
 import librarianRouter from "./routes/librarian.route.js";
 import borrowerRouter from "./routes/borrower.route.js";
+import borrowingRouter from "./routes/borrowing.route.js";
 
 const app: Express = express();
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use('/books', booksRouter)
 app.use('/authors', authorsRouter)
 app.use('/librarians', librarianRouter)
 app.use('/borrowers', borrowerRouter)
+app.use('/borrowings',borrowingRouter)
 
 
 export default app;
