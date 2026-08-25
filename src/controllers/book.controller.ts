@@ -18,7 +18,6 @@ export const getBooksController = async (req: Request, res: Response) => {
 export const getBooksByIdController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
 
-    // if (!Number.isInteger(id) || id < 1) return res.status(400).send("<p>Please check the id. Insert correct id.</p>");
 
     try {
         const book = await getBookByIdService(id);
