@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express"
 import { UpdateLibrarian } from "../schemas/librarian.schema.js"
 import { object, type ZodType } from "zod"
+import { ValidationError } from "../utils/ValidationError.js"
 
 export type RemoveUndefinedType<T> = {
     [K in keyof T]?: Exclude<T[K], undefined>
@@ -22,7 +23,7 @@ export const removeUndefinedMiddleware = (schema: ZodType) => {
 
         const data = schema.safeParse(req.body)
 
-        if (!data.success) return res.status(400).json({ error: "Invalid Data" })
+        if (!data.success) throw new ValidationError("Invalid Data",data.error.issues)
 
 
         req.body = removeUndefined(data.data as object)
