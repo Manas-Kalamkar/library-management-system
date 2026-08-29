@@ -48,7 +48,7 @@ export const deleteBook = async (id: string) => {
 export const updateBook = async (id: string, data: RemoveUndefinedType<UpdateBookType>) => {
     return await prisma.book.update({
         where: { id },
-        data: { data },
+        data,
         select: {
             title: true,
             genre: true,
