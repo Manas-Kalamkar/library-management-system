@@ -58,7 +58,6 @@ export const updateBorrowing = (id: string, data: RemoveUndefinedType<UpdateBorr
         data,
         select: {
             id: true,
-            book: true,
             bookId: true
         }
     })
@@ -69,8 +68,7 @@ export const deleteBorrowing = (id: string) => {
     return prisma.borrowing.delete({
         where: { id },
         select: {
-            borrower: true,
-            book: true
+            borrower: true
         }
     })
 }
