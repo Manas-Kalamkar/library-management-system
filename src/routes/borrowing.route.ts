@@ -6,8 +6,8 @@ import { UpdateBorrowing } from "../schemas/borrowing.schema.js";
 
 const borrowingRouter = Router();
 
-borrowingRouter.post('/', addBorrowingsController)
 borrowingRouter.get('/', getBorrowingsController)
+borrowingRouter.post('/', addBorrowingsController)
 borrowingRouter.get('/:id', getBorrowingByIdController)
 borrowingRouter.patch('/:id', removeUndefinedMiddleware(UpdateBorrowing), updateBorrowingController)
 borrowingRouter.delete('/:id', deleteBorrowingController)
