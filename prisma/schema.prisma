@@ -12,13 +12,20 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id       String @id @default(cuid())
+  userName String
+  email    String @unique
+  password String
+}
+
 model Author {
   id        String @id @default(cuid())
   name      String
   birthYear Int
   books     Book[] @relation("Authors")
 
-  @@unique([name,birthYear])
+  @@unique([name, birthYear])
 }
 
 model Book {
@@ -28,12 +35,12 @@ model Book {
   publishedYear Int
   available     Boolean
 
-  author   Author? @relation("Authors", fields: [authorId], references: [id],onDelete: Cascade)
+  author   Author? @relation("Authors", fields: [authorId], references: [id], onDelete: Cascade)
   authorId String
 
   borrowing Borrowing[] @relation("Borrowing")
 
-  @@unique([title,authorId])
+  @@unique([title, authorId])
 }
 
 model Librarian {
@@ -45,13 +52,13 @@ model Librarian {
 
   borrowing Borrowing[] @relation("Borrowing")
 
-  @@unique([name,email])
+  @@unique([name, email])
 }
 
 model Borrower {
-  id          String @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
-  email       String @unique
+  email       String   @unique
   joiningDate DateTime
   phoneNo     String
 
