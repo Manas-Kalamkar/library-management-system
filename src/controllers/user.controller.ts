@@ -3,7 +3,7 @@ import { LoginData, SignupData, type LoginDataType, type SignupDataType } from "
 import { userDeleteService, userLoginService, userSignupService, userStatusService } from "../services/user.service.js"
 import { ValidationError } from "../utils/ValidationError.js";
 import { AppError } from "../utils/AppError.js";
-import { findUser, findUserById } from "../repositories/user.repository.js";
+
 
 export const userSignupController = async (req: Request, res: Response) => {
     const data = SignupData.safeParse(req.body);
@@ -17,8 +17,6 @@ export const userSignupController = async (req: Request, res: Response) => {
 
 export const userLoginController = async (req: Request, res: Response) => {
     const data = LoginData.safeParse(req.body);
-
-
     if (!data.success) throw new ValidationError(data.error.message, data.error.issues)
     const user = await userLoginService(data.data);
     if (!user) throw new AppError("Unauthorized: Invalid email or password", 401)
@@ -43,5 +41,24 @@ export const userStatusController = async (req: Request, res: Response) => {
     if (!user) throw new AppError("User No Longer Exists", 401)
 
     return res.status(200).send(user)
+
+}
+export const userLogoutController = async (req: Request, res: Response) => {
+
+    if (!req.session.userId) throw new AppError("Unauthenticate User", 401)
+
+    req.session.destroy((err) => {
+
+        if (err) {
+            console.log("Session Error: ", err)
+            throw new AppError("Could not log out", 500)
+        }
+        res.clearCookie("connect.sid")
+
+        return res.status(200).send("User Logged Out")
+    })
+
+
+
 
 }
