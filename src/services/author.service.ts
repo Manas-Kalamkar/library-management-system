@@ -1,7 +1,7 @@
 import prisma from "../config/prisma.js"
 import { Prisma } from "../generated/prisma/client.js";
 import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
-import { addAuthor, getAuthors, getAuthorById, deleteAuthor, updateAuthor } from "../repositories/author.repository.js";
+import { addAuthor, getAuthors, getAuthorById, deleteAuthor, updateAuthor} from "../repositories/author.repository.js";
 import type { AuthorQuerySchemaType, CreateAuthorType, UpdateAuthorType } from "../schemas/author.schema.js";
 import { AppError } from "../utils/AppError.js";
 

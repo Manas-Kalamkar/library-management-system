@@ -5,8 +5,7 @@ import { ValidationError } from "../utils/ValidationError.js"
 import { AppError } from "../utils/AppError.js"
 
 
-export const getBooksController = async (req: Request, res: Response) => {
-
+export const getBooksController = async (req: Request, res: Response) => { 
     const query = BookQuerySchema.safeParse(req.query)
 
     if (!query.success) throw new ValidationError("Invalid Input", query.error.issues)
