@@ -16,7 +16,15 @@ export const findUser = async ({ email, password }: LoginDataType) => {
         }
     })
 }
-export const findUserById = async (id:string) => {
+export const findUserByEmail = async (email: string) => {
+    return await prisma.user.findUnique({
+        where: {
+            email
+        }
+    })
+}
+
+export const findUserById = async (id: string) => {
     return await prisma.user.findUnique({
         where: {
             id
@@ -34,4 +42,4 @@ export const deleteUser = async ({ email, password }: LoginDataType) => {
         }
     })
 }
-
+ 
