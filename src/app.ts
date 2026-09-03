@@ -1,8 +1,8 @@
 import express from "express";
 import type { Express, Request, Response } from "express";
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store'
 
 import homeRouter from "./routes/home.route.js";
 import booksRouter from "./routes/book.route.js";
@@ -14,20 +14,28 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 
 import { AppError } from "./utils/AppError.js";
 import userRouter from "./routes/user.route.js";
+import prisma from "./config/prisma.js"; 
 
 const app: Express = express();
 app.use(express.json());
 app.use(cors());
-app.use(cookieParser("helloworld"));
 app.use(session({
-    secret:'manas the great',
-    resave:false,
-    saveUninitialized:false,
-    cookie:{maxAge:30000}
+    secret: 'manas the great',
+    resave: false,
+    saveUninitialized: false,
+    store: new PrismaSessionStore(
+        prisma,
+        {
+            checkPeriod: 2 * 60 * 1000,
+            dbRecordIdIsSessionId: false
+        }
+    ),
+    cookie: { maxAge: 1 * 24 * 60 * 1000, httpOnly: true }
 }))
 
 
-app.use('/api/auth',userRouter)
+app.use('/api/auth', userRouter)
+
 
 app.use('/', homeRouter)
 app.use('/api/books', booksRouter)
