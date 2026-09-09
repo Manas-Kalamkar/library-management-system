@@ -14,7 +14,7 @@ export const requireRole = (allowedRole:("LIBRARIAN" | "BORROWER")[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const userRole = req.session.role;
 
-        if(!userRole || !allowedRole.includes(userRole  )) throw new AppError("Forbidden: You do not have permission to perform this action.",403)
+        if(!userRole || !allowedRole.includes(userRole)) throw new AppError("Forbidden: You do not have permission to perform this action.",403)
         next()
     }
 }
