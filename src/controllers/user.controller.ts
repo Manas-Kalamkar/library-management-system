@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { LoginData, SignupData, type LoginDataType, type SignupDataType } from "../schemas/user.schema.js";
+import { LoginData, SignupData } from "../schemas/user.schema.js";
 import { userDeleteService, userLoginService, userSignupService, userStatusService } from "../services/user.service.js"
 import { ValidationError } from "../utils/ValidationError.js";
 import { AppError } from "../utils/AppError.js";
@@ -22,6 +22,8 @@ export const userLoginController = async (req: Request, res: Response) => {
     if (!user) throw new AppError("Unauthorized: Invalid email or password", 401)
 
     req.session.userId = user.id
+    req.session.role = user.role
+
 
     return res.status(200).send(user);
 }
