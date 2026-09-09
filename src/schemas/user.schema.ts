@@ -3,7 +3,7 @@ import * as z from 'zod'
 export const SignupData = z.object({
     userName: z.string(),
     email: z.email(),
-    password: z.coerce.string()
+    password: z.coerce.string().min(8).max(15)
 })
 
 export type SignupDataType = z.infer<typeof SignupData>
