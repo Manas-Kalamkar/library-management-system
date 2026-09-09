@@ -4,6 +4,11 @@ import { hashPassword, comparePassword } from "../middlewares/hashPassword.js";
 import { AppError } from "../utils/AppError.js";
 
 export const userSignupService = async (data: SignupDataType) => {
+    const user= await findUserByEmail(data.email)
+
+
+    if(user) throw new AppError("User already exists",409)
+        
     data.password = await hashPassword(data.password)
 
     return await addUser(data);
@@ -15,9 +20,14 @@ export const userLoginService = async ({ email, password }: LoginDataType) => {
     const isPasswordCorrect = await (comparePassword(password, user.password))
 
 
-    if (!isPasswordCorrect) throw new AppError("Password Incorrect", 403)
+    if (!isPasswordCorrect) throw new AppError("Invalid Credentials ", 403)
 
-    return user;
+    return {
+        id:user.id,
+        email:user.email,
+        userName:user.userName,
+        role:user.role
+    };
 
 }
  
@@ -29,6 +39,11 @@ export const userDeleteService = async (data: LoginDataType) => {
 
 export const userStatusService = async (id: string) => {
     const user = await findUserById(id);
-    return user;
 
+    if(!user) throw new AppError('User not Found',404)
+    return  {
+        id:user.id,
+        email:user.email,
+        userName:user.userName
+    };
 }
