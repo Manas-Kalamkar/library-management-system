@@ -24,13 +24,18 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: new PrismaSessionStore(
-        prisma,
+        prisma as any,
         {
             checkPeriod: 2 * 60 * 1000,
             dbRecordIdIsSessionId: false
         }
     ),
-    cookie: { maxAge: 1 * 24 * 60 * 1000, httpOnly: true }
+    cookie: {
+         maxAge: 1 * 24 * 60 * 60 * 1000,
+         httpOnly: true,
+         secure:process.env.NODE_ENV === 'production',
+         sameSite:"lax"
+         }
 }))
 
 
