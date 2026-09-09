@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Session" ADD COLUMN     "role" TEXT NOT NULL DEFAULT 'BORROWER';
