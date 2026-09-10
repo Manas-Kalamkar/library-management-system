@@ -4,7 +4,22 @@ import type { LoginDataType, SignupDataType } from "../schemas/user.schema.js"
 
 export const addUser = async (data: SignupDataType) => {
     return await prisma.user.create({
-        data
+        data:{
+            userName:data.userName,
+            email:data.email,
+            password:data.password,
+            role:"BORROWER",
+            
+            borrowers:{
+                create:{
+                    
+                    name:data.userName,
+                    phoneNo:data.phoneNo,
+
+                    
+                }
+            }
+        }
     })
 }
 
@@ -34,11 +49,10 @@ export const findUserById = async (id: string) => {
 
 
 
-export const deleteUser = async ({ email, password }: LoginDataType) => {
+export const deleteUser = async (id: string) => {
     return await prisma.user.delete({
         where: {
-            email,
-            password
+            id
         }
     })
 }
