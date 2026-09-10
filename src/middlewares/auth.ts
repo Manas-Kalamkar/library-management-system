@@ -9,7 +9,7 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
     next()
 }
 
-export const requireRole = (allowedRole:("LIBRARIAN" | "BORROWER")[]) => {
+export const requireRole = (allowedRole:("LIBRARIAN" | "BORROWER" | "ADMIN")[]) => {
 
     return (req: Request, res: Response, next: NextFunction) => {
         const userRole = req.session.role;
