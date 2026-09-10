@@ -29,10 +29,9 @@ export const userLoginController = async (req: Request, res: Response) => {
 }
 
 export const userDeleteController = async (req: Request, res: Response) => {
-    const data = LoginData.safeParse(req.body);
-
-    if (!data.success) throw new ValidationError(data.error.message, data.error.issues)
-    const user = await userDeleteService(data.data);
+    const id = String(req.params.id)
+    console.log("id",id)
+    const user = await userDeleteService(id);
 
     return res.status(204).send(user);
 }
