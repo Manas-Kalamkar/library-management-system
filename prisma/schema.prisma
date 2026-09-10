@@ -15,6 +15,7 @@ datasource db {
 enum Role {
   BORROWER
   LIBRARIAN
+  ADMIN
 }
 
 model Session {
@@ -84,7 +85,7 @@ model Borrower {
   id          String   @id @default(cuid())
   userId      String   @unique
   name        String 
-  joiningDate DateTime
+  joiningDate DateTime @default(now())
   phoneNo     String
 
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
