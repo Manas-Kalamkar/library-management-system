@@ -3,8 +3,7 @@ export declare module 'express-session' {
   interface SessionData {
     userId:string;
     data: string;
-    role: "BORROWER"|"LIBRARIAN";
-    expiresAt:Date;
+    role: "BORROWER"|"LIBRARIAN"|"ADMIN";
 
   }
 }
