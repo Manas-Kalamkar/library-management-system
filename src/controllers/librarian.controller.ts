@@ -32,15 +32,13 @@ export const getLibrarianByIdController = async (req: Request, res: Response) =>
 
 export const addLibrarianController = async (req: Request, res: Response) => {
 
-    const arr = req.body;
 
-    for (let i = 0; i < arr.length; i++) {
-        const result = CreateLibrarian.safeParse(arr[i])
-        if (!result.success) throw new ValidationError("Invalid Librarian Data", result.error.issues)
-        const Librarian = await addLibrarianService(result.data)
-        res.status(201).json({ message: "Librarian added", Librarian })
+    const result = CreateLibrarian.safeParse(req.body)
+    if (!result.success) throw new ValidationError("Invalid Librarian Data", result.error.issues)
+    const Librarian = await addLibrarianService(result.data)
+    res.status(201).json({ message: "Librarian added", Librarian })
 
-    }
+
 }
 export const deleteLibrarianController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
