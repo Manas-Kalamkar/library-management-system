@@ -4,9 +4,10 @@ import * as z from 'zod'
 
 export const CreateLibrarian = z.object({
   name: z.string(),
-  email: z.email(),
   salary: z.int(),
-  joiningYear: z.int()
+  email:z.email(),
+  joiningYear: z.int(),
+  password:z.string(),
 })
 
 export type CreateLibrarianType = z.infer<typeof CreateLibrarian>
