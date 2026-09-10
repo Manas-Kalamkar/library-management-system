@@ -1,8 +1,10 @@
 import { Prisma } from "../generated/prisma/client.js";
+import { hashPassword } from "../middlewares/hashPassword.js";
 import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 import { addLibrarian, getLibrarians, getLibrarianById, deleteLibrarian, updateLibrarian } from "../repositories/librarian.repository.js";
 import type { CreateLibrarianType, LibrarianQuerySchemaType, UpdateLibrarianType } from "../schemas/librarian.schema.js";
 import { AppError } from "../utils/AppError.js";
+import bcrypt from "bcrypt"
 
 
 export const getLibrariansService = async (query: LibrarianQuerySchemaType) => {
@@ -16,9 +18,10 @@ export const getLibrarianByIdService = async (id: string) => {
     return Librarians
 }
 
-export const addLibrarianService = async (data: CreateLibrarianType) => {
+export const addLibrarianService = async ({name,email,password,salary,joiningYear}: CreateLibrarianType) => {
     try {
-        await addLibrarian(data);
+        password = await hashPassword(password)
+        await addLibrarian({name,email,password,salary,joiningYear});
 
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError)
@@ -35,7 +38,7 @@ export const deleteLibrarianService = async (id: string) => {
     } catch (err) {
         if (err instanceof Prisma.PrismaClientKnownRequestError) {
             if (err.code === "P2025") throw new AppError("Librarian Not Found", 404)
-            if (err.code === "P2002") throw new AppError("Librarianalready exists", 409)
+            if (err.code === "P2002") throw new AppError("Librarian already exists", 409)
         }
     }
 }

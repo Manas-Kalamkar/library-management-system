@@ -27,8 +27,26 @@ export const getLibrarianById = (id: string) => {
     })
 }
 export const addLibrarian = (data: CreateLibrarianType) => {
-    return prisma.librarian.create({
-        data
+    return prisma.user.create({
+        data: {
+            userName: data.name,
+            email: data.email,
+            password: data.password,
+            role: "LIBRARIAN",
+            librarians: {
+
+                create: {
+                    name: data.name,
+                    salary: data.salary,
+                    joiningYear: data.joiningYear,
+                }
+            }
+
+        },
+
+        include: {
+            librarians: true
+        }
     })
 }
 
