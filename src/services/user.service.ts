@@ -4,6 +4,19 @@ import { hashPassword, comparePassword } from "../middlewares/hashPassword.js";
 import { AppError } from "../utils/AppError.js";
 import { Prisma } from "../generated/prisma/client.js";
 
+
+export const getUserService = async(id:string) => {
+    try{
+        const user = await findUserById(id);
+        return user
+    }catch(error){
+        console.log("Error: ",error)
+        throw new AppError("User not found.",404)
+    }
+}
+
+
+
 export const userSignupService = async (data: SignupDataType) => {
 
     data.password = await hashPassword(data.password)
