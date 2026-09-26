@@ -18,10 +18,22 @@ export const getLibrarianByIdService = async (id: string) => {
     return Librarians
 }
 
-export const addLibrarianService = async ({name,email,password,salary,joiningYear}: CreateLibrarianType) => {
+export const addLibrarianService = async (data: CreateLibrarianType) => {
     try {
-        password = await hashPassword(password)
-        await addLibrarian({name,email,password,salary,joiningYear});
+        const prismaCreateData: Prisma.UserCreateInput = {
+            userName: data.name,
+            email: data.email,
+            password: await hashPassword(data.password),
+            role: "LIBRARIAN",
+            librarians: {
+                create: {
+                    name: data.name,
+                    salary: data.salary,
+                    joiningYear: data.joiningYear
+                }
+            }
+        }
+        return await addLibrarian(prismaCreateData);
 
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError)
@@ -44,9 +56,23 @@ export const deleteLibrarianService = async (id: string) => {
 }
 
 
-export const updateLibrarianService = async (id: string, data: RemoveUndefinedType<UpdateLibrarianType>) => {
+export const updateLibrarianService = async (id: string, data: UpdateLibrarianType) => {
     try {
-        const updatedLibrarian = await updateLibrarian(id, data);
+        const prismaUpdateData: Prisma.LibrarianUpdateInput = {
+            name: data.name,
+            salary: data.salary,
+            joiningYear: data.joiningYear,
+            user: {
+                update: {
+                    userName: data.name,
+                    email: data.email,
+                    password: data.password ? await hashPassword(data.password) : undefined
+                }
+            }
+
+        }
+
+        const updatedLibrarian = await updateLibrarian(id, prismaUpdateData);
         return updatedLibrarian
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

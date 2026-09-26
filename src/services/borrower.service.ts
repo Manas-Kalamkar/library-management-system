@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js"
 import { Prisma } from "../generated/prisma/client.js";
+import { hashPassword } from "../middlewares/hashPassword.js";
 import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 import { addBorrower, getBorrowers, getBorrowerById, deleteBorrower, updateBorrower } from "../repositories/borrower.repository.js";
 import type { BorrowerQuerySchemaType, CreateBorrowerType, UpdateBorrowerType } from "../schemas/borrower.schema.js";
@@ -23,7 +24,22 @@ export const getBorrowerByIdService = async (id: string) => {
 
 export const addBorrowerService = async (data: CreateBorrowerType) => {
     try {
-        const Borrower = await addBorrower(data)
+        const password = await hashPassword(data.password)
+        const prismaCreateData: Prisma.UserCreateInput = {
+            userName: data.name,
+            email: data.email,
+            password: data.password,
+            role: "BORROWER",
+            borrowers: {
+                create: {
+                    name: data.name,
+                    joiningDate: data.joiningDate,
+                    phoneNo: data.phoneNo,
+
+                }
+            }
+        }
+        const Borrower = await addBorrower(prismaCreateData)
         return Borrower;
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -46,9 +62,25 @@ export const deleteBorrowerService = async (id: string) => {
 }
 
 
-export const updateBorrowerService = async (id: string, data: RemoveUndefinedType<UpdateBorrowerType>) => {
+export const updateBorrowerService = async (id: string, data: UpdateBorrowerType) => {
     try {
-        const Borrower = await updateBorrower(id, data)
+        
+        data.password = data.password ? await hashPassword(data.password) : undefined
+        const prismaUpdateData: Prisma.UserUpdateInput = {
+            userName: data.name,
+            password: data.password,
+            email: data.email,
+            role:"BORROWER",
+            borrowers:{
+                update:{
+                    name:data.name,
+                    joiningDate:data.joiningDate,
+                    phoneNo:data.phoneNo
+                }
+            }
+
+        }
+        const Borrower = await updateBorrower(id, prismaUpdateData)
         return Borrower;
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

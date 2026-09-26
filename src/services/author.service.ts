@@ -47,7 +47,7 @@ export const deleteAuthorService = async (id: string) => {
 
 
 
-export const updateAuthorService = async (id: string, data: RemoveUndefinedType<UpdateAuthorType>) => {
+export const updateAuthorService = async (id: string, data: Prisma.AuthorUpdateInput) => {
     try {
         const updatedAuthor = await updateAuthor(id, data);
         return updatedAuthor;
