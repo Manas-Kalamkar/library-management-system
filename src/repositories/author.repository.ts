@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import type { Prisma } from "../generated/prisma/client.js";
 import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 import type { AuthorQuerySchemaType, CreateAuthor, CreateAuthorType, UpdateAuthorType } from "../schemas/author.schema.js";
 
@@ -28,9 +29,9 @@ export const getAuthorById = (id: string) => {
         }
     })
 }
-export const addAuthor = (data: CreateAuthorType) => {
+export const addAuthor = (data: Prisma.AuthorCreateInput) => {
     return prisma.author.create({
-        data
+        data: data
     })
 }
 
@@ -44,7 +45,7 @@ export const deleteAuthor = (id: string) => {
     })
 }
 
-export const updateAuthor = (id: string, data: RemoveUndefinedType<UpdateAuthorType>) => {
+export const updateAuthor = (id: string, data: Prisma.AuthorUpdateInput) => {
     return prisma.author.update({
         where: { id },
         data,

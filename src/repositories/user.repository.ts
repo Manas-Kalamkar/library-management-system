@@ -54,6 +54,13 @@ export const deleteUser = async (id: string) => {
         where: {
             id
         }
+        ,
+        select:{
+            userName:true,
+            email:true,
+            role:true
+        }
+        
     })
 }
  

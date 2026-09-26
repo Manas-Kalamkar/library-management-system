@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import type { Prisma } from "../generated/prisma/client.js";
 import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 import type { BorrowerQuerySchemaType, CreateBorrowerType, UpdateBorrowerType } from "../schemas/borrower.schema.js";
 
@@ -41,27 +42,27 @@ export const getBorrowerById = (id: string) => {
         }
     })
 }
-export const addBorrower = (data: CreateBorrowerType) => {
-    return prisma.borrower.create({
+export const addBorrower = (data: Prisma.UserCreateInput) => {
+    return prisma.user.create({
         data
     })
 }
 
 
 export const deleteBorrower = (id: string) => {
-    return prisma.borrower.delete({
+    return prisma.user.delete({
         where: { id },
         select: {
-            name: true,
+            userName: true,
         }
     })
 }
-export const updateBorrower = (id: string, data: RemoveUndefinedType<UpdateBorrowerType>) => {
-    return prisma.borrower.update({
+export const updateBorrower = (id: string, data: Prisma.UserUpdateInput) => {
+    return prisma.user.update({
         where: { id },
         data,
         select: {
-            name: true,
+            userName: true,
         }
     })
 }

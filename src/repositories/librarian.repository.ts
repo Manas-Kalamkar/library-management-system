@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import type { Prisma } from "../generated/prisma/client.js";
 import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 import type { CreateLibrarianType, LibrarianQuerySchemaType, UpdateLibrarianType } from "../schemas/librarian.schema.js";
 
@@ -26,49 +27,43 @@ export const getLibrarianById = (id: string) => {
         }
     })
 }
-export const addLibrarian = (data: CreateLibrarianType) => {
+export const addLibrarian = (data: Prisma.UserCreateInput) => {
     return prisma.user.create({
-        data: {
-            userName: data.name,
-            email: data.email,
-            password: data.password,
-            role: "LIBRARIAN",
-            librarians: {
+        data,
 
-                create: {
-                    name: data.name,
-                    salary: data.salary,
-                    joiningYear: data.joiningYear,
-                }
-            }
-
-        },
-
-        include: {
-            librarians: true
+        select:{
+            userName:true,
+            email:true
         }
     })
 }
 
 
 export const deleteLibrarian = (id: string) => {
-    return prisma.librarian.delete({
+    return prisma.user.delete({
         where: { id },
         select: {
-            name: true,
+            userName: true,
         }
     })
 }
 
-export const updateLibrarian = (id: string, data: RemoveUndefinedType<UpdateLibrarianType>) => {
-    return prisma.librarian.update({
+export const updateLibrarian = (id: string, data: Prisma.LibrarianUpdateInput) => {
+    return prisma.user.update({
         where: {
-            id
+            id:id
         }
         ,
         data,
         select: {
-            name: true,
+            userName:true,
+            user:{
+                select:{
+                    userName:true,
+                    email:true
+
+                }
+            }
         }
 
     })

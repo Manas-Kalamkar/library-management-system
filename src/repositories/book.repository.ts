@@ -1,10 +1,11 @@
 import prisma from "../config/prisma.js";
+import type { Prisma } from "../generated/prisma/client.js";
 import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 import type { BookQuerySchemaType, CreateBookType, UpdateBookType } from "../schemas/book.schema.js";
 
 
 
-export const addBook = async (data: CreateBookType) => {
+export const addBook = async (data: Prisma.BookCreateInput) => {
     return await prisma.book.create({
         data
     })
@@ -45,7 +46,7 @@ export const deleteBook = async (id: string) => {
     })
 }
 
-export const updateBook = async (id: string, data: RemoveUndefinedType<UpdateBookType>) => {
+export const updateBook = async (id: string, data: Prisma.BookUpdateInput) => {
     return await prisma.book.update({
         where: { id },
         data,
