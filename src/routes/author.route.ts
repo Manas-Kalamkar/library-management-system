@@ -11,10 +11,10 @@ const authorsRouter =  Router()
 authorsRouter.get("/",requireAuth,getAuthorsController)
 authorsRouter.get("/:id",requireAuth,getAuthorByIdController)
 
-authorsRouter.post("/",requireAuth,requireRole(["LIBRARIAN"]),addAuthorController)
-authorsRouter.delete("/:id",requireAuth,requireRole(["LIBRARIAN"]),deleteAuthorController)
+authorsRouter.post("/",requireAuth,requireRole(["LIBRARIAN","ADMIN"]),addAuthorController)
+authorsRouter.delete("/:id",requireAuth,requireRole(["LIBRARIAN","ADMIN"]),deleteAuthorController)
 
-authorsRouter.patch("/:id",requireAuth,requireRole(["LIBRARIAN"]),removeUndefinedMiddleware(UpdateAuthor),updateAuthorController)
+authorsRouter.patch("/:id",requireAuth,requireRole(["LIBRARIAN","ADMIN"]),updateAuthorController)
 
 
 export default authorsRouter

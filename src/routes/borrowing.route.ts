@@ -7,11 +7,11 @@ import { requireAuth,requireRole } from "../middlewares/auth.js";
 
 const borrowingRouter = Router();
 
-borrowingRouter.get('/',requireAuth,requireRole(["LIBRARIAN"]), getBorrowingsController)
-borrowingRouter.post('/',requireAuth,requireRole(["LIBRARIAN"]), addBorrowingsController)
-borrowingRouter.get('/:id',requireAuth,requireRole(["LIBRARIAN"]), getBorrowingByIdController)
-borrowingRouter.patch('/:id',requireAuth,requireRole(["LIBRARIAN"]), removeUndefinedMiddleware(UpdateBorrowing), updateBorrowingController)
-borrowingRouter.delete('/:id',requireAuth,requireRole(["LIBRARIAN"]), deleteBorrowingController)
+borrowingRouter.get('/',requireAuth,requireRole(["LIBRARIAN","ADMIN"]), getBorrowingsController)
+borrowingRouter.post('/',requireAuth,requireRole(["LIBRARIAN","ADMIN"]), addBorrowingsController)
+borrowingRouter.get('/:id',requireAuth,requireRole(["LIBRARIAN","ADMIN"]), getBorrowingByIdController)
+borrowingRouter.patch('/:id',requireAuth,requireRole(["LIBRARIAN","ADMIN"]), removeUndefinedMiddleware(UpdateBorrowing), updateBorrowingController)
+borrowingRouter.delete('/:id',requireAuth,requireRole(["LIBRARIAN","ADMIN"]), deleteBorrowingController)
 
 
 export default borrowingRouter

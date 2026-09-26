@@ -8,12 +8,12 @@
     const librarianRouter = Router()
 
 
-    librarianRouter.get("/",requireAuth,requireRole(["LIBRARIAN","ADMIN"]), getLibrariansController)
-    librarianRouter.get("/:id",requireAuth,requireRole(["LIBRARIAN","ADMIN"]), getLibrarianByIdController)
+    librarianRouter.get("/",requireAuth,requireRole(["ADMIN"]), getLibrariansController)
+    librarianRouter.get("/:id",requireAuth,requireRole(["ADMIN"]), getLibrarianByIdController)
     librarianRouter.post("/",requireAuth,requireRole(["ADMIN"]), addLibrarianController)
     librarianRouter.delete("/:id",requireAuth,requireRole(["ADMIN"]), deleteLibrarianController)
 
-    librarianRouter.patch("/:id",requireAuth,requireRole(["ADMIN"]), removeUndefinedMiddleware(UpdateLibrarian), updateLibrarianController)
+    librarianRouter.patch("/:id",requireAuth,requireRole(["ADMIN"]),  updateLibrarianController)
 
 
     export default librarianRouter
