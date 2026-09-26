@@ -11,9 +11,9 @@ import librarianRouter from "./routes/librarian.route.js";
 import borrowerRouter from "./routes/borrower.route.js";
 import borrowingRouter from "./routes/borrowing.route.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
+import userRouter from "./routes/user.route.js";
 
 import { AppError } from "./utils/AppError.js";
-import userRouter from "./routes/user.route.js";
 import prisma from "./config/prisma.js"; 
 
 const app: Express = express();
