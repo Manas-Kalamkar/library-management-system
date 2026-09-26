@@ -5,6 +5,7 @@ import * as z from 'zod'
 export const CreateBorrower = z.object({
   name: z.string(),
   email: z.email(),
+  password:z.string(),
   joiningDate: z.coerce.date(),
   phoneNo: z.coerce.string()
 })
