@@ -14,7 +14,7 @@ userRouter.get('/status', requireAuth, userStatusController)
 
 userRouter.post('/logout', requireAuth, userLogoutController)
 
-userRouter.delete('/:id', requireAuth, requireRole(["ADMIN", "LIBRARIAN"]), userDeleteController)
+userRouter.delete('/:id', requireAuth, userDeleteController)
 
 
 

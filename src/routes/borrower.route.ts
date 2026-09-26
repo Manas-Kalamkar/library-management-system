@@ -8,10 +8,10 @@ import { requireAuth, requireRole } from "../middlewares/auth.js"
 const borrowerRouter =  Router()
 
 
-borrowerRouter.get("/",requireAuth,requireRole(["LIBRARIAN"]),getBorrowersController)
-borrowerRouter.get("/:id",requireAuth,requireRole(["LIBRARIAN"]),getBorrowerByIdController)
-borrowerRouter.post("/",requireAuth,requireRole(["LIBRARIAN"]),addBorrowerController)
-borrowerRouter.delete("/:id",requireAuth,requireRole(["LIBRARIAN"]),deleteBorrowerController)
+borrowerRouter.get("/",requireAuth,requireRole(["LIBRARIAN","ADMIN"]),getBorrowersController)
+borrowerRouter.get("/:id",requireAuth,requireRole(["LIBRARIAN","ADMIN"]),getBorrowerByIdController)
+borrowerRouter.post("/",requireAuth,requireRole(["LIBRARIAN","ADMIN"]),addBorrowerController)
+borrowerRouter.delete("/:id",requireAuth,requireRole(["LIBRARIAN","ADMIN"]),deleteBorrowerController)
 
 borrowerRouter.patch("/:id",removeUndefinedMiddleware(UpdateBorrower),updateBorrowerController)
 
