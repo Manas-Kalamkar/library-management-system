@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { LoginData, SignupData } from "../schemas/user.schema.js";
-import { userDeleteService, userLoginService, userSignupService, userStatusService } from "../services/user.service.js"
+import { getUserService, userDeleteService, userLoginService, userSignupService, userStatusService } from "../services/user.service.js"
 import { ValidationError } from "../utils/ValidationError.js";
 import { AppError } from "../utils/AppError.js";
 
@@ -30,10 +30,15 @@ export const userLoginController = async (req: Request, res: Response) => {
 
 export const userDeleteController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
-    console.log("id",id)
-    const user = await userDeleteService(id);
+    const user = await getUserService(id)
 
+    if(req.session.id !== id){
+        throw new AppError("Unauthorized to delete other users.",403)
+    }
+
+    await userDeleteService(id);
     return res.status(204).send(user);
+
 }
 export const userStatusController = async (req: Request, res: Response) => {
     if (!req.session.userId) throw new AppError("Not Authenticated", 401)

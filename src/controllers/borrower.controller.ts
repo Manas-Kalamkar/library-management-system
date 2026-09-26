@@ -1,7 +1,7 @@
 import { type Request, type Response } from "express";
 import { getBorrowersService, addBorrowerService, getBorrowerByIdService, deleteBorrowerService, updateBorrowerService } from '../services/borrower.service.js'
 import { Prisma } from "../generated/prisma/client.js";
-import { BorrowerQuerySchema, CreateBorrower } from "../schemas/borrower.schema.js";
+import { BorrowerQuerySchema, CreateBorrower, UpdateBorrower } from "../schemas/borrower.schema.js";
 import { AppError } from "../utils/AppError.js";
 import { ValidationError } from "../utils/ValidationError.js";
 
@@ -54,10 +54,13 @@ export const deleteBorrowerController = async (req: Request, res: Response) => {
 
 export const updateBorrowerController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
-    const result = req.body
+    const result = UpdateBorrower.safeParse(req.body)
+
+    if( !result.data ) throw new ValidationError(result.error.message,result.error.issues)
+    
     try {
-        const Borrower = await updateBorrowerService(id, result)
-        res.status(201).json({ message: "Borrower added", Borrower })
+        const Borrower = await updateBorrowerService(id, result.data)
+        res.status(201).json({ Pmessage: "Borrower added", Borrower })
     } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
             return res.status(409).json({ error: "Borroweralready exists", message: "An Borrower with this emailalready exists." })

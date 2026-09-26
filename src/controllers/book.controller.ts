@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express"
 import { addBookService, deleteBookService, getBookByIdService, getBooksService, updateBookService } from "../services/book.service.js"
-import { BookQuerySchema, CreateBook } from "../schemas/book.schema.js"
+import { BookQuerySchema, CreateBook, UpdateBook } from "../schemas/book.schema.js"
 import { ValidationError } from "../utils/ValidationError.js"
 import { AppError } from "../utils/AppError.js"
 
@@ -49,8 +49,11 @@ export const deleteBookController = async (req: Request, res: Response) => {
 
 export const updateBookController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
-    const data = req.body;
-    const book = await updateBookService(id, data);
+    const data = UpdateBook.safeParse(req.body);
+
+    if( !data.success ) throw new ValidationError(data.error.message,data.error.issues)
+
+    const book = await updateBookService(id, data.data);
     return res.status(200).send(book)
 
 }

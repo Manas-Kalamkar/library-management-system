@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import { getLibrariansService, addLibrarianService, getLibrarianByIdService, deleteLibrarianService, updateLibrarianService } from "../services/librarian.service.js";
-import { CreateLibrarian, LibrarianQuerySchema, type UpdateLibrarianType } from "../schemas/librarian.schema.js";
+import { CreateLibrarian, LibrarianQuerySchema, type UpdateLibrarianType, UpdateLibrarian } from "../schemas/librarian.schema.js";
 import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 import { ValidationError } from "../utils/ValidationError.js";
 import { AppError } from "../utils/AppError.js";
@@ -51,8 +51,9 @@ export const deleteLibrarianController = async (req: Request, res: Response) => 
 
 export const updateLibrarianController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
-    const data: RemoveUndefinedType<UpdateLibrarianType> = req.body;
-    const updateLibrarian = await updateLibrarianService(id, data)
+    const data =  UpdateLibrarian.safeParse(req.body);
+    if(!data.success) throw new ValidationError("Librarian Update Input Data.",data.error)
+    const updateLibrarian = await updateLibrarianService(id, data.data)
     return res.status(200).json({ updateLibrarian: updateLibrarian })
 
 }

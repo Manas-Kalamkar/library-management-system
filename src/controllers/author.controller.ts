@@ -1,7 +1,7 @@
 import { type Request, type Response } from "express";
 import { getAuthorsService, addAuthorService, getAuthorByIdService, deleteAuthorService, updateAuthorService } from "../services/author.service.js";
 import { Prisma } from "../generated/prisma/client.js";
-import { AuthorQuerySchema, CreateAuthor } from "../schemas/author.schema.js";
+import { AuthorQuerySchema, CreateAuthor, UpdateAuthor } from "../schemas/author.schema.js";
 import { AppError } from "../utils/AppError.js";
 import { ValidationError } from "../utils/ValidationError.js";
 
@@ -46,8 +46,9 @@ export const deleteAuthorController = async (req: Request, res: Response) => {
 
 export const updateAuthorController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
-    const result = req.body
-    const author = await updateAuthorService(id, result)
+    const result = UpdateAuthor.safeParse(req.body)
+    if(!result.success) throw new ValidationError("Validation Error: ",result.error)
+    const author = await updateAuthorService(id, result.data)
     res.status(201).json({ message: "Author updated", author })
 
 
