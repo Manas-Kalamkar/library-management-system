@@ -15,7 +15,6 @@ const adapter = new PrismaPg(pool)
 
 const prisma = new PrismaClient({ adapter, })
 
-// Clean abstraction for server startup
 export const connectDB = async () => {
     try {
         // This physically tests the connection and credentials
