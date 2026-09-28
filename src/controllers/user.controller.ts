@@ -3,6 +3,7 @@ import { LoginData, SignupData } from "../schemas/user.schema.js";
 import { getUserService, userDeleteService, userLoginService, userSignupService, userStatusService } from "../services/user.service.js"
 import { ValidationError } from "../utils/ValidationError.js";
 import { AppError } from "../utils/AppError.js";
+import prisma from "../config/prisma.js";
 
 
 export const userSignupController = async (req: Request, res: Response) => {
@@ -23,6 +24,19 @@ export const userLoginController = async (req: Request, res: Response) => {
 
     req.session.userId = user.id
     req.session.role = user.role
+
+    req.session.save(async (err) => {
+        if (err) throw new Error(err)
+        
+        await prisma.session.update({
+            where:{
+                sid:req.sessionID
+            },
+            data:{
+                userId:user.id
+            }
+        })
+    })
 
 
     return res.status(200).send(user);
