@@ -26,7 +26,7 @@ export const getBorrowers = ({ search, joiningDate, page, limit, sort, order }: 
         })
     }
 
-    return prisma.borrower.findMany({
+    return prisma.user.findMany({
         where,
         // skip: (page - 1) * limit,
         // take: limit,
@@ -36,7 +36,7 @@ export const getBorrowers = ({ search, joiningDate, page, limit, sort, order }: 
     })
 }
 export const getBorrowerById = (id: string) => {
-    return prisma.borrower.findUnique({
+    return prisma.user.findUnique({
         where: {
             id
         }
