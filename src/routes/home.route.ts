@@ -6,8 +6,7 @@ const homeRouter = Router();
 homeRouter.use('/home',(req:Request,res:Response) => {
     console.log(req.session.id)
     console.log(req.session)
-    console.log(req.sessionStore)
-    req.session.visited = true;
+    console.log(req.sessionStore) 
     res.status(200).send(`
         <h1>
             Welcome To City Library
