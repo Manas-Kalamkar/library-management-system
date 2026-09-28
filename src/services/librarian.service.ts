@@ -58,15 +58,15 @@ export const deleteLibrarianService = async (id: string) => {
 
 export const updateLibrarianService = async (id: string, data: UpdateLibrarianType) => {
     try {
-        const prismaUpdateData: Prisma.LibrarianUpdateInput = {
-            name: data.name,
-            salary: data.salary,
-            joiningYear: data.joiningYear,
-            user: {
+        const prismaUpdateData: Prisma.UserUpdateInput = {
+            userName: data.name,
+            email: data.email,
+            password: data.password ? await hashPassword(data.password) : undefined,
+            librarians: {
                 update: {
-                    userName: data.name,
-                    email: data.email,
-                    password: data.password ? await hashPassword(data.password) : undefined
+                    name: data.name,
+                    salary: data.salary,
+                    joiningYear: data.joiningYear,
                 }
             }
 
