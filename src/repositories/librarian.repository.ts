@@ -21,9 +21,10 @@ export const getLibrarians = ({ search, joiningYear, sort, order, page, limit }:
     })
 }
 export const getLibrarianById = (id: string) => {
-    return prisma.librarian.findUnique({
+    return prisma.user.findUnique({
         where: {
-            id
+            id,
+            role:"LIBRARIAN"
         }
     })
 }
@@ -48,7 +49,7 @@ export const deleteLibrarian = (id: string) => {
     })
 }
 
-export const updateLibrarian = (id: string, data: Prisma.LibrarianUpdateInput) => {
+export const updateLibrarian = (id: string, data: Prisma.UserUpdateInput) => {
     return prisma.user.update({
         where: {
             id:id
