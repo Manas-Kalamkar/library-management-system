@@ -1,6 +1,6 @@
 import dotenv from 'dotenv/config';
 import app from './app.js';
-import prisma, { connectDB } from './config/prisma.js';
+import { connectDB } from './config/prisma.js';
 
 
 const PORT = process.env.PORT || 5000;
