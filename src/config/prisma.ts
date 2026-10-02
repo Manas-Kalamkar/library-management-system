@@ -2,13 +2,14 @@ import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client.js";
 import { DatabaseError } from "../utils/DatabaseError.js";
+import { logger } from "./logger.js";
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL
 })
 
 pool.on("error", (error) => {
-    throw new DatabaseError(error.message, error.cause)
+    logger.error({ err: error }, "Unexpected error on idle database client");
 })
 
 const adapter = new PrismaPg(pool)
