@@ -56,7 +56,7 @@ export const updateBorrowerController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
     const result = UpdateBorrower.safeParse(req.body)
 
-    if( !result.data ) throw new ValidationError(result.error.message,result.error.issues)
+    if( !result.success ) throw new ValidationError(result.error.message,result.error.issues)
     
     try {
         const Borrower = await updateBorrowerService(id, result.data)
