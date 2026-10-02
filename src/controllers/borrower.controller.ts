@@ -56,17 +56,9 @@ export const updateBorrowerController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
     const result = UpdateBorrower.safeParse(req.body)
 
-    if( !result.success ) throw new ValidationError(result.error.message,result.error.issues)
-    
-    try {
-        const Borrower = await updateBorrowerService(id, result.data)
-        res.status(201).json({ Pmessage: "Borrower added", Borrower })
-    } catch (e) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-            return res.status(409).json({ error: "Borroweralready exists", message: "An Borrower with this emailalready exists." })
-        }
-        return res.status(500).json({
-            error: "Internal server error"
-        });
-    }
+    if (!result.success) throw new ValidationError(result.error.message, result.error.issues)
+
+    const borrower = await updateBorrowerService(id, result.data)
+    res.status(200).json({ message: "Borrower updated", borrower })
+
 }
