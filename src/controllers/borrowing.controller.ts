@@ -68,7 +68,11 @@ export const updateBorrowingController = async (req: Request, res: Response) => 
     const id = String(req.params.id)
 
 
-    const borrowings = await updateBorrowingService(id, req.body)
+    const body = UpdateBorrowing.safeParse(req.body)
+    if (!body.success) throw new ValidationError("Invalid Input", body.error.issues)
+
+
+    const borrowings = await updateBorrowingService(id, body.data)
     return res.status(200).json({ data: borrowings })
 }
 
