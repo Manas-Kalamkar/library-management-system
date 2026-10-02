@@ -64,7 +64,7 @@ export const addBorrowingsService = async (
 };
 
 
-export const updateBorrowingService = async (id: string, data: RemoveUndefinedType<UpdateBorrowingType>) => {
+export const updateBorrowingService = async (id: string, data: UpdateBorrowingType) => {
     try{
         const borrowing = await updateBorrowing(id, data);
         return borrowing;
