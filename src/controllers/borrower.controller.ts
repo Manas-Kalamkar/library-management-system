@@ -1,6 +1,5 @@
 import { type Request, type Response } from "express";
 import { getBorrowersService, addBorrowerService, getBorrowerByIdService, deleteBorrowerService, updateBorrowerService } from '../services/borrower.service.js'
-import { Prisma } from "../generated/prisma/client.js";
 import { BorrowerQuerySchema, CreateBorrower, UpdateBorrower } from "../schemas/borrower.schema.js";
 import { AppError } from "../utils/AppError.js";
 import { ValidationError } from "../utils/ValidationError.js";
@@ -11,21 +10,17 @@ export const getBorrowersController = async (req: Request, res: Response) => {
     const query = BorrowerQuerySchema.safeParse(req.query);
     if (!query.success) throw new ValidationError("Invalid Input", query.error.issues)
 
-
-    const Borrowers = await getBorrowersService(query.data);
-    if (!Borrowers.length) throw new AppError("Book Not Found", 404)
-
-    return res.status(200).send(Borrowers)
+    const borrowers = await getBorrowersService(query.data);
+    return res.status(200).send(borrowers)
 }
 
 
 export const getBorrowerByIdController = async (req: Request, res: Response) => {
     const id = String(req.params.id);
 
-
-    const Borrower = await getBorrowerByIdService(id);
-    if (!Borrower) throw new AppError("Borrower Not Found", 404)
-    return res.status(200).send(Borrower)
+    const borrower = await getBorrowerByIdService(id);
+    if (!borrower) throw new AppError("Borrower Not Found", 404)
+    return res.status(200).send(borrower)
 }
 
 
@@ -34,7 +29,7 @@ export const addBorrowerController = async (req: Request, res: Response) => {
     const result = CreateBorrower.safeParse(req.body)
     if (!result.success) throw new ValidationError("Invalid Data", result.error.issues)
 
-    const Borrower = await addBorrowerService(result.data)
+    await addBorrowerService(result.data)
     return res.status(201).json({ message: "Borrower added" })
 
 }
@@ -42,13 +37,8 @@ export const addBorrowerController = async (req: Request, res: Response) => {
 
 export const deleteBorrowerController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
-    try {
-        const deletedBorrower = await deleteBorrowerService(id)
-        return res.status(200).json({ deletedBorrower: deletedBorrower })
-    } catch (e) {
-        return res.status(400).send(e)
-    }
-
+    const deletedBorrower = await deleteBorrowerService(id)
+    return res.status(200).json({ deletedBorrower })
 }
 
 
@@ -56,9 +46,8 @@ export const updateBorrowerController = async (req: Request, res: Response) => {
     const id = String(req.params.id)
     const result = UpdateBorrower.safeParse(req.body)
 
-    if (!result.success) throw new ValidationError(result.error.message, result.error.issues)
+    if (!result.success) throw new ValidationError("Invalid Data", result.error.issues)
 
     const borrower = await updateBorrowerService(id, result.data)
     res.status(200).json({ message: "Borrower updated", borrower })
-
 }
