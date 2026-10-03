@@ -18,31 +18,46 @@ enum Role {
   ADMIN
 }
 
-model Session {
-  id        String   @id @default(cuid())
-  sid       String   @unique
-  data      String
-  createAt  DateTime @default(now())
-  expiresAt DateTime
+model User {
+  id       String @id @default(cuid())
+  userName String
+  email    String @unique
+  password String
+  role     Role   @default(BORROWER)
+  createAt DateTime @default(now())
 
-  userId    String?
-  user      User?     @relation(fields: [userId], references: [id],onDelete: Cascade)
+  // Brute-force protection
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  lastLoginAt         DateTime?
 
-  @@index([userId])
-  @@index([expiresAt])
+  refreshTokens RefreshToken[]
+  borrowers     Borrower?
+  librarians    Librarian?
 }
 
-model User {
-  id        String   @id @default(cuid())
-  userName  String
-  email     String   @unique
-  password  String
-  role      Role     @default(BORROWER)
-  createAt  DateTime @default(now()) 
+// One row per issued refresh token. Only the SHA-256 hash of the token is stored,
+// so a database leak does not hand out usable tokens. Tokens are rotated on every
+// use; all tokens that descend from one login share a `familyId`, which lets us
+// revoke the whole chain when a stolen/old token is replayed.
+model RefreshToken {
+  id                String    @id @default(cuid())
+  tokenHash         String    @unique
+  familyId          String
+  userId            String
+  expiresAt         DateTime
+  absoluteExpiresAt DateTime
+  createdAt         DateTime  @default(now())
+  revokedAt         DateTime?
+  replacedById      String?
+  userAgent         String?
+  ipAddress         String?
 
-  sessions   Session[]
-  borrowers  Borrower?
-  librarians Librarian?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt])
 }
 
 model Author {
