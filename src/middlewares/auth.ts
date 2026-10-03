@@ -1,20 +1,26 @@
 import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/AppError.js";
+import { verifyAccessToken, type Role } from "../utils/security/jwt.js";
 
+const BEARER = /^Bearer\s+(\S+)$/i;
 
+/** Verifies the `Authorization: Bearer <accessToken>` header and sets `req.user`. */
+export const requireAuth = (req: Request, _res: Response, next: NextFunction) => {
+    const match = BEARER.exec(req.headers.authorization ?? "");
+    if (!match?.[1]) throw new AppError("Authentication required", 401, "UNAUTHENTICATED");
 
-export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
-    if (!req.session.userId) throw new AppError("Unauthorized. Please login first", 401)
+    req.user = verifyAccessToken(match[1]);
+    next();
+};
 
-    next()
-}
+/** Must run after requireAuth. */
+export const requireRole = (allowedRoles: Role[]) => {
+    return (req: Request, _res: Response, next: NextFunction) => {
+        const role = req.user?.role;
 
-export const requireRole = (allowedRole:("LIBRARIAN" | "BORROWER" | "ADMIN")[]) => {
-
-    return (req: Request, res: Response, next: NextFunction) => {
-        const userRole = req.session.role;
-
-        if(!userRole || !allowedRole.includes(userRole)) throw new AppError("Forbidden: You do not have permission to perform this action.",403)
-        next()
-    }
-}
+        if (!role || !allowedRoles.includes(role)) {
+            throw new AppError("Forbidden: You do not have permission to perform this action.", 403, "FORBIDDEN");
+        }
+        next();
+    };
+};
