@@ -1,11 +1,15 @@
 import { Pool } from "pg";
+import { env } from "./env.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client.js";
 import { DatabaseError } from "../utils/DatabaseError.js";
 import { logger } from "./logger.js";
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DATABASE_URL,
+    max: env.DB_POOL_MAX,
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 5_000,
 })
 
 pool.on("error", (error) => {
@@ -18,15 +22,19 @@ const prisma = new PrismaClient({ adapter, })
 
 export const connectDB = async () => {
     try {
-        // This physically tests the connection and credentials
         const client = await pool.connect();
-        client.release(); // Release it back to the pool immediately
+        client.release(); 
         console.log("Database connected successfully.");
 
     } catch (error: any) {
-        console.error("⚠️ Warning: Server starting, but DB connection failed:", error.message);
-        throw new DatabaseError(error.message,error.cause)
+        const err = error as Error;
+        throw new DatabaseError("Database connection failed", err.message)
     }
 };
+
+export const disconnectDB = async () => {
+    await prisma.$disconnect();
+    await pool.end();
+}
 
 export default prisma;
