@@ -1,7 +1,6 @@
 import { type Request, type Response } from "express";
 import { getLibrariansService, addLibrarianService, getLibrarianByIdService, deleteLibrarianService, updateLibrarianService } from "../services/librarian.service.js";
-import { CreateLibrarian, LibrarianQuerySchema, type UpdateLibrarianType, UpdateLibrarian } from "../schemas/librarian.schema.js";
-import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
+import { CreateLibrarian, LibrarianQuerySchema,  UpdateLibrarian } from "../schemas/librarian.schema.js";
 import { ValidationError } from "../utils/ValidationError.js";
 import { AppError } from "../utils/AppError.js";
 

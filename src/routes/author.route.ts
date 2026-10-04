@@ -1,7 +1,5 @@
 import { Router } from "express"
 import { getAuthorsController, getAuthorByIdController,addAuthorController,deleteAuthorController,updateAuthorController } from "../controllers/author.controller.js"
-import { removeUndefinedMiddleware } from "../middlewares/removeUndefined.js"
-import { UpdateAuthor } from "../schemas/author.schema.js"
 import { requireAuth, requireRole } from "../middlewares/auth.js"
 
 
