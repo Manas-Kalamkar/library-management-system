@@ -1,7 +1,6 @@
 import prisma from "../config/prisma.js";
 import type { Prisma } from "../generated/prisma/client.js";
-import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
-import type { AuthorQuerySchemaType, CreateAuthor, CreateAuthorType, UpdateAuthorType } from "../schemas/author.schema.js";
+import type { AuthorQuerySchemaType } from "../schemas/author.schema.js";
 
 export const getAuthors = ({ search, name, birthYear, page, limit, sort, order }: AuthorQuerySchemaType) => {
 
