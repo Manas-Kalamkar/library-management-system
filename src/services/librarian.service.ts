@@ -1,21 +1,18 @@
 import { Prisma } from "../generated/prisma/client.js";
-import { hashPassword } from "../middlewares/hashPassword.js";
-import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 import { addLibrarian, getLibrarians, getLibrarianById, deleteLibrarian, updateLibrarian } from "../repositories/librarian.repository.js";
 import type { CreateLibrarianType, LibrarianQuerySchemaType, UpdateLibrarianType } from "../schemas/librarian.schema.js";
-import { AppError } from "../utils/AppError.js";
-import bcrypt from "bcrypt"
+import { handlePrismaError } from "../utils/prismaErrors.js";
+import { hashPassword } from "../utils/security/password.js";
+import { revokeAllUserTokens } from "./token.service.js";
 
 
 export const getLibrariansService = async (query: LibrarianQuerySchemaType) => {
-    const Librarians = await getLibrarians(query);
-    return Librarians
+    return await getLibrarians(query);
 }
 
 
 export const getLibrarianByIdService = async (id: string) => {
-    const Librarians = await getLibrarianById(id);
-    return Librarians
+    return await getLibrarianById(id);
 }
 
 export const addLibrarianService = async (data: CreateLibrarianType) => {
@@ -36,8 +33,7 @@ export const addLibrarianService = async (data: CreateLibrarianType) => {
         return await addLibrarian(prismaCreateData);
 
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError)
-            if (error.code === "P2002") throw new AppError(`Librarian already exists.`, 409)
+        return handlePrismaError(error, { P2002: "Librarian already exists." })
     }
 }
 
@@ -45,13 +41,12 @@ export const addLibrarianService = async (data: CreateLibrarianType) => {
 
 export const deleteLibrarianService = async (id: string) => {
     try {
-        const Librarians = await deleteLibrarian(id);
-        return Librarians
-    } catch (err) {
-        if (err instanceof Prisma.PrismaClientKnownRequestError) {
-            if (err.code === "P2025") throw new AppError("Librarian Not Found", 404)
-            if (err.code === "P2002") throw new AppError("Librarian already exists", 409)
-        }
+        return await deleteLibrarian(id);
+    } catch (error) {
+        return handlePrismaError(error, {
+            P2025: "Librarian Not Found",
+            P2003: "Librarian cannot be deleted because related records exist",
+        })
     }
 }
 
@@ -59,26 +54,27 @@ export const deleteLibrarianService = async (id: string) => {
 export const updateLibrarianService = async (id: string, data: UpdateLibrarianType) => {
     try {
         const prismaUpdateData: Prisma.UserUpdateInput = {
-            userName: data.name,
-            email: data.email,
-            password: data.password ? await hashPassword(data.password) : undefined,
+            ...(data.name !== undefined && { userName: data.name }),
+            ...(data.email !== undefined && { email: data.email }),
+            ...(data.password !== undefined && { password: await hashPassword(data.password) }),
             librarians: {
                 update: {
-                    name: data.name,
-                    salary: data.salary,
-                    joiningYear: data.joiningYear,
+                    ...(data.name !== undefined && { name: data.name }),
+                    ...(data.salary !== undefined && { salary: data.salary }),
+                    ...(data.joiningYear !== undefined && { joiningYear: data.joiningYear }),
                 }
             }
-
         }
 
         const updatedLibrarian = await updateLibrarian(id, prismaUpdateData);
+
+        if (data.password !== undefined) await revokeAllUserTokens(id)
+
         return updatedLibrarian
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === "P2002") throw new AppError(`Librarian already exists.`, 409)
-            if (error.code === "P2025") throw new AppError("Librarian Not Found", 404)
-        }
+        return handlePrismaError(error, {
+            P2002: "Librarian already exists.",
+            P2025: "Librarian Not Found",
+        })
     }
-
 }
