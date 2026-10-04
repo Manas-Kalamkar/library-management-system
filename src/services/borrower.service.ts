@@ -1,91 +1,79 @@
-import prisma from "../config/prisma.js"
 import { Prisma } from "../generated/prisma/client.js";
-import { hashPassword } from "../middlewares/hashPassword.js";
-import type { RemoveUndefinedType } from "../middlewares/removeUndefined.js";
 import { addBorrower, getBorrowers, getBorrowerById, deleteBorrower, updateBorrower } from "../repositories/borrower.repository.js";
 import type { BorrowerQuerySchemaType, CreateBorrowerType, UpdateBorrowerType } from "../schemas/borrower.schema.js";
-import { AppError } from "../utils/AppError.js";
-
-
-
-
+import { handlePrismaError } from "../utils/prismaErrors.js";
+import { hashPassword } from "../utils/security/password.js";
+import { revokeAllUserTokens } from "./token.service.js";
 
 
 export const getBorrowersService = async (query: BorrowerQuerySchemaType) => {
-    const Borrowers = await getBorrowers(query);
-    return Borrowers
+    return await getBorrowers(query);
 }
 
 
 export const getBorrowerByIdService = async (id: string) => {
-    const Borrowers = await getBorrowerById(id);
-    return Borrowers
+    return await getBorrowerById(id);
 }
 
 export const addBorrowerService = async (data: CreateBorrowerType) => {
     try {
-        const password = await hashPassword(data.password)
         const prismaCreateData: Prisma.UserCreateInput = {
             userName: data.name,
             email: data.email,
-            password: data.password,
+            // (previously the *plaintext* password was stored here - always hash it)
+            password: await hashPassword(data.password),
             role: "BORROWER",
             borrowers: {
                 create: {
                     name: data.name,
-                    joiningDate: data.joiningDate,
+                    ...(data.joiningDate ? { joiningDate: data.joiningDate as string | Date } : {}),
                     phoneNo: data.phoneNo,
-
                 }
             }
         }
-        const Borrower = await addBorrower(prismaCreateData)
-        return Borrower;
+        return await addBorrower(prismaCreateData)
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === "P2002") throw new AppError("Borrower already exists.", 409)
-        }
+        return handlePrismaError(error, { P2002: "Borrower already exists." })
     }
 }
 
 
 export const deleteBorrowerService = async (id: string) => {
     try {
-        const Borrowers = await deleteBorrower(id);
-        return Borrowers
+        return await deleteBorrower(id)
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === "P2003") throw new AppError("Borrower cannot be deleted because related records exist", 409)
-            if (error.code === "P2025") throw new AppError("Borrower Not Found", 404)
-        }
+        return handlePrismaError(error, {
+            P2003: "Borrower cannot be deleted because related records exist",
+            P2025: "Borrower Not Found",
+        })
     }
 }
 
 
 export const updateBorrowerService = async (id: string, data: UpdateBorrowerType) => {
     try {
-        
-        data.password = data.password ? await hashPassword(data.password) : undefined
         const prismaUpdateData: Prisma.UserUpdateInput = {
-            userName: data.name,
-            password: data.password,
-            email: data.email,
-            role:"BORROWER",
-            borrowers:{
-                update:{
-                    name:data.name,
-                    joiningDate:data.joiningDate,
-                    phoneNo:data.phoneNo
+            ...(data.name !== undefined && { userName: data.name }),
+            ...(data.password !== undefined && { password: await hashPassword(data.password) }),
+            ...(data.email !== undefined && { email: data.email }),
+            borrowers: {
+                update: {
+                    ...(data.name !== undefined && { name: data.name }),
+                    ...(data.joiningDate !== undefined && { joiningDate: data.joiningDate as string | Date}),
+                    ...(data.phoneNo !== undefined && { phoneNo: data.phoneNo }),
                 }
             }
+        }
+        const borrower = await updateBorrower(id, prismaUpdateData)
 
-        }
-        const Borrower = await updateBorrower(id, prismaUpdateData)
-        return Borrower;
+        // A password reset must kick out anyone holding the old credentials.
+        if (data.password !== undefined) await revokeAllUserTokens(id)
+
+        return borrower
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === "P2002") throw new AppError("Borrower already exists", 409)
-            if (error.code === "P2025") throw new AppError("Borrower Not Found", 404)
-        }
+        return handlePrismaError(error, {
+            P2002: "Borrower already exists",
+            P2025: "Borrower Not Found",
+        })
     }
 }
