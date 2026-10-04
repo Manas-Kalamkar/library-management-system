@@ -1,9 +1,12 @@
+import type { AuthUser } from "../utils/security/jwt.js";
 
-export declare module 'express-session' {
-  interface SessionData {
-    userId:string;
-    data: string;
-    role: "BORROWER"|"LIBRARIAN"|"ADMIN";
-
-  }
+declare global {
+    namespace Express {
+        interface Request {
+            /** Set by requireAuth after the access token has been verified. */
+            user?: AuthUser;
+        }
+    }
 }
+
+export {};
