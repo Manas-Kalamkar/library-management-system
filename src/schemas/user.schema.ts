@@ -1,17 +1,26 @@
-import * as z from 'zod'
+import * as z from "zod";
+import { EmailSchema, NameSchema, PasswordSchema } from "./common.schema.js";
 
 export const SignupData = z.object({
-    userName: z.string(),
-    email: z.email(),
-    password: z.coerce.string().min(8).max(15),
-    phoneNo:z.coerce.string().min(10).max(10)
-})
+    userName: NameSchema,
+    email: EmailSchema,
+    password: PasswordSchema,
+    phoneNo: z.string().trim().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+});
 
-export type SignupDataType = z.infer<typeof SignupData>
+export type SignupDataType = z.infer<typeof SignupData>;
 
 export const LoginData = z.object({
-    email: z.email(),
-    password: z.coerce.string()
-})
+    email: EmailSchema,
+    // No strength rules on login: just bound the size so nobody can feed bcrypt megabytes.
+    password: z.string().min(1).max(200),
+});
 
-export type LoginDataType = z.infer<typeof LoginData>
+export type LoginDataType = z.infer<typeof LoginData>;
+
+export const ChangePasswordData = z.object({
+    currentPassword: z.string().min(1).max(200),
+    newPassword: PasswordSchema,
+});
+
+export type ChangePasswordDataType = z.infer<typeof ChangePasswordData>;

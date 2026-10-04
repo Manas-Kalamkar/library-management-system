@@ -1,4 +1,5 @@
 import * as z from 'zod'
+import { NameSchema } from './common.schema.js'
 
 
 export interface Author {
@@ -9,8 +10,8 @@ export interface Author {
 
 
 export const CreateAuthor= z.object({
-  name: z.string(),
-  birthYear: z.number()
+  name: NameSchema,
+  birthYear: z.number().min(0).max(new Date().getFullYear())
 })
 
 export type CreateAuthorType = z.infer<typeof CreateAuthor>
