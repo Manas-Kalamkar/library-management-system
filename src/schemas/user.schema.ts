@@ -12,7 +12,6 @@ export type SignupDataType = z.infer<typeof SignupData>;
 
 export const LoginData = z.object({
     email: EmailSchema,
-    // No strength rules on login: just bound the size so nobody can feed bcrypt megabytes.
     password: z.string().min(1).max(200),
 });
 
