@@ -58,7 +58,7 @@ export const addBorrowingsController = async (req: Request, res: Response) => {
     if (!data.success) throw new ValidationError("Invalid Input", data.error.issues)
 
 
-    const result = await addBorrowingsService(data.data);
+    const result = await addBorrowingsService(data.data,req.user!);
     return res.status(201).json(result);
 
 }
