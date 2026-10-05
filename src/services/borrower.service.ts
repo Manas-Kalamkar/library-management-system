@@ -59,7 +59,7 @@ export const updateBorrowerService = async (id: string, data: UpdateBorrowerType
             borrowers: {
                 update: {
                     ...(data.name !== undefined && { name: data.name }),
-                    ...(data.joiningDate !== undefined && { joiningDate: data.joiningDate as string | Date}),
+                    ...(data.joiningDate !== undefined && { joiningDate: data.joiningDate as Date}),
                     ...(data.phoneNo !== undefined && { phoneNo: data.phoneNo }),
                 }
             }
