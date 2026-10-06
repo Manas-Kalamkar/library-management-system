@@ -7,7 +7,7 @@ export const CreateBorrower = z.object({
   name: NameSchema,
   email: EmailSchema,
   password: PasswordSchema,
-  joiningDate: z.coerce.date().optional,
+  joiningDate: z.coerce.date().optional(),
   phoneNo: PhoneSchema
 })
 
