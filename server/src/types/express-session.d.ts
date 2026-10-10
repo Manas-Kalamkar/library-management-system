@@ -1,4 +1,4 @@
-import type { AuthUser } from "../utils/security/jwt.js";
+import type { AuthUser } from "../utils/security/jwt.ts";
 
 declare global {
     namespace Express {
