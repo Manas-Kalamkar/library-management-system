@@ -1,0 +1,115 @@
+@import "tailwindcss";
+@import "@fontsource-variable/public-sans";
+@import "@fontsource-variable/literata";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Semantic tokens. Components never use raw colours, so light/dark is a one-place change. */
+:root {
+  color-scheme: light;
+  --bg: #f1f3f6;          /* reading-room paper */
+  --surface: #ffffff;
+  --surface-2: #f6f7f9;
+  --line: #dde2ea;
+  --line-strong: #c3cad6;
+  --ink: #1a2233;
+  --muted: #566074;
+  --brand: #1e2b4a;       /* book-cloth navy */
+  --brand-hover: #2b3b63;
+  --brand-ink: #ffffff;
+  --brand-soft: #e6eaf4;
+  --rail: #16213b;
+  --rail-ink: #e9edf7;
+  --rail-muted: #9aa6c2;
+  --rail-line: #26335a;
+  --brass: #8a5d0b;       /* shelf-label brass, used sparingly */
+  --ok: #1b6b45;      --ok-bg: #e2f3ea;
+  --warn: #8a5a00;    --warn-bg: #fbefd2;
+  --danger: #a3283a;  --danger-bg: #fbe6e9;  --danger-ink: #ffffff;
+  --focus: #2f62d6;
+}
+.dark {
+  color-scheme: dark;
+  --bg: #0d1322;
+  --surface: #151c31;
+  --surface-2: #1a2340;
+  --line: #28345a;
+  --line-strong: #3a4873;
+  --ink: #e8ecf5;
+  --muted: #a3adc4;
+  --brand: #8ea6ec;
+  --brand-hover: #a6b9f3;
+  --brand-ink: #0b1124;
+  --brand-soft: #1f2a4d;
+  --rail: #0a0f1d;
+  --rail-ink: #e9edf7;
+  --rail-muted: #8f9bb8;
+  --rail-line: #1b2442;
+  --brass: #e0b35a;
+  --ok: #5bd39b;      --ok-bg: #12291f;
+  --warn: #e8b54f;    --warn-bg: #2d2412;
+  --danger: #ff8d9c;  --danger-bg: #3a1a21;  --danger-ink: #2a0a10;
+  --focus: #9db5ff;
+}
+
+@theme inline {
+  --font-sans: "Public Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Literata Variable", ui-serif, Georgia, serif;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-rail: var(--rail);
+  --color-rail-ink: var(--rail-ink);
+  --color-rail-muted: var(--rail-muted);
+  --color-rail-line: var(--rail-line);
+  --color-brass: var(--brass);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-ink: var(--danger-ink);
+  --color-focus: var(--focus);
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--font-serif); letter-spacing: -0.01em; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+  ::selection { background: color-mix(in srgb, var(--focus) 30%, transparent); }
+  button:not(:disabled), [role="button"], summary { cursor: pointer; }
+  dialog { color: inherit; }
+}
+
+/* The one orchestrated moment: the covers on the sign-in page settle into place. */
+@keyframes settle {
+  from { opacity: 0; transform: translateY(18px) rotate(var(--from-rot, 0deg)); }
+  to   { opacity: 1; transform: translateY(0) rotate(var(--to-rot, 0deg)); }
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(6px) scale(0.985); } to { opacity: 1; transform: none; } }
+
+dialog[open] { animation: dialog-in 140ms ease-out; }
+dialog::backdrop { background: rgb(8 12 24 / 0.55); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
