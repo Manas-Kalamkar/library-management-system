@@ -8,7 +8,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>City Library</title>
     <script>
-
+      // Apply the saved theme before first paint so there is no flash of the wrong one.
+      try {
+        var t = localStorage.getItem("theme");
+        var dark = t === "dark" || ((!t || t === "system") && matchMedia("(prefers-color-scheme: dark)").matches);
+        if (dark) document.documentElement.classList.add("dark");
+      } catch (e) {}
     </script>
   </head>
   <body>
