@@ -1,0 +1,30 @@
+--- a/src/repositories/book.repository.ts	2026-10-08 13:39:33.071133606 +0530
++++ b/src/repositories/book.repository.ts	2026-10-10 07:11:15.246979796 +0530
+@@ -28,7 +28,9 @@
+         take: limit,
+         orderBy: {
+             [sort]: order
+-        }
++        },
++        // lets the UI show the author's name without one extra request per book
++        include: { author: { select: { id: true, name: true } } }
+     })
+ }
+ export const getBooksById = async (id: string) => {
+--- a/src/repositories/borrowing.repository.ts	2026-10-08 13:39:33.071239982 +0530
++++ b/src/repositories/borrowing.repository.ts	2026-10-10 07:11:15.247294621 +0530
+@@ -18,7 +18,13 @@
+         where,
+         skip: (page - 1) * limit,
+         take: limit,
+-        orderBy: { [sort]: order }
++        orderBy: { [sort]: order },
++        // names for the UI, so it doesn't have to resolve ids one by one
++        include: {
++            book: { select: { id: true, title: true } },
++            borrower: { select: { id: true, name: true } },
++            librarian: { select: { id: true, name: true } },
++        }
+     })
+ }
+ 
